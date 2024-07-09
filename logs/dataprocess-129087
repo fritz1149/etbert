@@ -1,0 +1,52 @@
+[Errno 2] No such file or directory: '/home/LAB/changc/etbert/datasets/cross_platform/etbert/testdataset/'
+Dataset directory /home/LAB/changc/etbert/datasets/cross_platform/etbert/testdataset/ not exist.
+Begin to obtain new dataset.
+in walk /home/LAB/changc/etbert/datasets/cross_platform/etbert/pcap/b612kaji [] ['b612kaji.pcap']
+session_pcap_path {'b612kaji': '/home/LAB/changc/etbert/datasets/cross_platform/etbert/pcap/b612kaji'}
+
+Begin to generate features.
+  0%|          | 0/1 [00:00<?, ?it/s]  0%|          | 0/1 [00:06<?, ?it/s]
+Traceback (most recent call last):
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/site-packages/flowcontainer/reader.py", line 96, in read
+    process = Popen(command, stdout=PIPE, stderr=PIPE)
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/subprocess.py", line 951, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/subprocess.py", line 1837, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'tshark'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/site-packages/flowcontainer/reader.py", line 100, in read
+    raise  EnvironmentError('tshark is not installed or added to environment path.')
+OSError: tshark is not installed or added to environment path.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/LAB/changc/etbert/data_process/main.py", line 343, in <module>
+    main()
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/site-packages/click/core.py", line 1157, in __call__
+    return self.main(*args, **kwargs)
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/site-packages/click/core.py", line 1078, in main
+    rv = self.invoke(ctx)
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/site-packages/click/core.py", line 1434, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/site-packages/click/core.py", line 783, in invoke
+    return __callback(*args, **kwargs)
+  File "/home/LAB/changc/etbert/data_process/main.py", line 340, in main
+    dataset_extract(train_model)
+  File "/home/LAB/changc/etbert/data_process/main.py", line 87, in dataset_extract
+    X, Y = dataset_generation.generation(
+  File "/home/LAB/changc/etbert/data_process/dataset_generation.py", line 552, in generation
+    feature_data = get_feature_flow(
+  File "/home/LAB/changc/etbert/data_process/dataset_generation.py", line 188, in get_feature_flow
+    feature_result = extract(
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/site-packages/flowcontainer/extractor.py", line 75, in extract
+    result = real_extract(infile,filter,extension, ip_layer, cmd_parameter, verbose)
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/site-packages/flowcontainer/extractor.py", line 16, in real_extract
+    result = reader.read(infile,filter,extension,ip_layer,cmd_parameter=cmd_parameter)
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/site-packages/flowcontainer/reader.py", line 115, in read
+    raise EnvironmentError(ex)
+OSError: tshark is not installed or added to environment path.

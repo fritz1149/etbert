@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/home/LAB/changc/etbert/data_process/main.py", line 15, in <module>
+    import dataset_generation
+  File "/home/LAB/changc/etbert/data_process/dataset_generation.py", line 17, in <module>
+    import scapy.all as scapy
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/site-packages/scapy/all.py", line 16, in <module>
+    from scapy.arch import *
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/site-packages/scapy/arch/__init__.py", line 27, in <module>
+    from scapy.arch.bpf.core import get_if_raw_addr
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/site-packages/scapy/arch/bpf/core.py", line 30, in <module>
+    LIBC = cdll.LoadLibrary(find_library("libc"))
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/ctypes/util.py", line 351, in find_library
+    _get_soname(_findLib_gcc(name)) or _get_soname(_findLib_ld(name))
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/ctypes/util.py", line 148, in _findLib_gcc
+    if not _is_elf(file):
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/ctypes/util.py", line 100, in _is_elf
+    with open(filename, 'br') as thefile:
+FileNotFoundError: [Errno 2] No such file or directory: b'liblibc.a'

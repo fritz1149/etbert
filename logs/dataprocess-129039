@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/home/LAB/changc/etbert/data_process/main.py", line 342, in <module>
+    main()
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/site-packages/click/core.py", line 1157, in __call__
+    return self.main(*args, **kwargs)
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/site-packages/click/core.py", line 1078, in main
+    rv = self.invoke(ctx)
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/site-packages/click/core.py", line 1434, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/site-packages/click/core.py", line 783, in invoke
+    return __callback(*args, **kwargs)
+  File "/home/LAB/changc/etbert/data_process/main.py", line 332, in main
+    samples = count_label_number(samples)
+  File "/home/LAB/changc/etbert/data_process/main.py", line 276, in count_label_number
+    new_samples = samples * _category
+TypeError: can't multiply sequence by non-int of type 'str'

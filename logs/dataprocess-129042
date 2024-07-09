@@ -1,0 +1,21 @@
+[Errno 2] No such file or directory: '/home/LAB/changc/etbert/datasets/cross_platform/etbert/testdataset/'
+Dataset directory /home/LAB/changc/etbert/datasets/cross_platform/etbert/testdataset/ not exist.
+Begin to obtain new dataset.
+Traceback (most recent call last):
+  File "/home/LAB/changc/etbert/data_process/main.py", line 342, in <module>
+    main()
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/site-packages/click/core.py", line 1157, in __call__
+    return self.main(*args, **kwargs)
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/site-packages/click/core.py", line 1078, in main
+    rv = self.invoke(ctx)
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/site-packages/click/core.py", line 1434, in invoke``
+    return ctx.invoke(self.callback, **ctx.params)
+  File "/home/LAB/changc/.conda/envs/ET-BERT/lib/python3.9/site-packages/click/core.py", line 783, in invoke
+    return __callback(*args, **kwargs)
+  File "/home/LAB/changc/etbert/data_process/main.py", line 339, in main
+    dataset_extract(train_model)
+  File "/home/LAB/changc/etbert/data_process/main.py", line 87, in dataset_extract
+    X, Y = dataset_generation.generation(
+  File "/home/LAB/changc/etbert/data_process/dataset_generation.py", line 422, in generation
+    for dirs in os.listdir(pcap_path):
+FileNotFoundError: [Errno 2] No such file or directory: 'dataset_dir=/home/LAB/changc/etbert/datasets/cross_platform/etbert/pcap'
