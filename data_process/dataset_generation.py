@@ -22,6 +22,7 @@ random.seed(40)
 
 word_dir = "./corpora/"
 word_name = "encrypted_burst.txt"
+split_cap_dir = "/root/SplitCap.exe"
 
 
 def convert_pcapng_2_pcap(pcapng_path, pcapng_file, output_path):
@@ -35,7 +36,10 @@ def convert_pcapng_2_pcap(pcapng_path, pcapng_file, output_path):
 
 
 def split_cap(pcap_path, pcap_file, pcap_name, pcap_label="", dataset_level="flow"):
-
+    # print('pcap_path:', pcap_path)
+    # print('pcap_file:', pcap_file)
+    # print('pcap_name:', pcap_name)
+    # print('pcap_label:', pcap_label)
     if not os.path.exists(pcap_path + "/splitcap"):
         os.mkdir(pcap_path + "/splitcap")
 
@@ -52,13 +56,14 @@ def split_cap(pcap_path, pcap_file, pcap_name, pcap_label="", dataset_level="flo
         output_path = pcap_path + "/splitcap/" + pcap_name
 
     if dataset_level == "flow":
-        cmd = "mono SplitCap -r %s -s session -o " + output_path
+        cmd = f"mono {split_cap_dir} -r %s -s session -o " + output_path
     elif dataset_level == "packet":
         cmd = (
-            "mono /home/natsuu/Downloads/SplitCap.exe -p 4096 -r %s -s packets 1 -o "
+            f"mono {split_cap_dir} -p 4096 -r %s -s packets 1 -o "
             + output_path
         )
     command = cmd % pcap_file
+    # print('command', command)
     os.system(command)
     return output_path
 
@@ -440,6 +445,7 @@ def generation(
             # print('in walk', p, dd, ff)
             if splitcap:
                 for file in ff:
+                    # print('file', p + "/" + file)
                     session_path = split_cap(
                         pcap_path,
                         p + "/" + file,
@@ -452,7 +458,7 @@ def generation(
                 # session_pcap_path[dirs] = pcap_path + dirs
                 session_pcap_path[dirs] = p
     # print('label_name_list', label_name_list)
-    # print('session_pcap_path', session_pcap_path)
+    print('session_pcap_path', len(session_pcap_path))
 
     label_id = {}
     for index in range(len(label_name_list)):
@@ -539,6 +545,8 @@ def generation(
             for y in x[1]
         ]
         # 如果比目标样本数还少就全部放进去
+        # print('samples, label_count', len(samples), label_count)
+        # print(samples)
         if len(target_all_files) <= samples[label_count]:
             r_files = target_all_files
         else:

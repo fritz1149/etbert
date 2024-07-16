@@ -4,6 +4,7 @@ import os
 import pickle
 import random
 import subprocess
+import shutil
 from pathlib import Path
 
 import tqdm
@@ -33,11 +34,16 @@ def generate_raw_dataset(args, pcap_dir: Path):
     - 对于每个 label 目录，读取其中所有 pcap 文件，并对其所有 packet 做数据处理
     - 生成的 `dataset.pkl` 保存在 `pcap_dir` 目录下，可直接用于 `FineTuneDataset`
     """
-    labels_dir = [x for x in pcap_dir.iterdir() if "." not in x.name]
+    labels_dir = [x for x in pcap_dir.iterdir() if x.is_dir()]
     labels = [x.name for x in labels_dir]
     print(f"labels: {labels}, count {len(labels)}")
 
-    out_dir = pcap_dir / "../raw"
+    out_dir = pcap_dir / "../tmp"
+    try:
+        shutil.rmtree(out_dir.as_posix())
+        print(f"文件夹 {out_dir.as_posix()} 下的所有内容已被删除")
+    except OSError as e:
+        print("删除出了问题")
     out_dir.mkdir(exist_ok=True)
 
     # define bigram generation function
@@ -94,12 +100,13 @@ def generate_raw_dataset(args, pcap_dir: Path):
                     payload_string = binascii.hexlify(
                         bytes(packet_data)).decode()
                     xx = bigram_generation(payload_string, packet_len=128)
-                    x.append(xx)
+                    data.append(xx)
+                    # x.append(xx)
 
-                    if len(x) >= 10:
-                        break
+                    # if len(x) >= 10:
+                    #     break
 
-                data.append(''.join(x))
+                # data.append(''.join(x))
         pickle.dump({"label": idx, "data": data},
                     (out_dir / f"{ld.name}.pkl").open("wb"))
 
@@ -107,12 +114,15 @@ def generate_raw_dataset(args, pcap_dir: Path):
 def generate_dataset(args, raw_dataset_dir: Path):
     data = []
     for d in raw_dataset_dir.iterdir():
+        if d.name == 'dataset.pkl':
+            continue
         ds = pickle.load(d.open("rb"))
         # ds = pickle.load((d / "dataset_raw.pkl").open("rb"))
 
-        print(f"Length of dataset {d.name}: {len(ds['data'])}")
+        print(f"Length of dataset {d.name}: ", end="")
+        print(len(ds['data']))
         lb_data = random.sample(
-            ds["data"], args.samples) if args.samples is not None else ds["data"]
+            ds["data"], args.samples) if args.samples is not None and len(ds["data"]) >= args.samples else ds["data"]
 
         for xx in tqdm.tqdm(
             lb_data, total=len(lb_data), desc=f"Tokenizing dataset {d.name}"
@@ -131,6 +141,21 @@ def generate_dataset(args, raw_dataset_dir: Path):
     random.shuffle(data)
     pickle.dump(data, (raw_dataset_dir / "dataset.pkl").open("wb"))
 
+def postprocess_dataset(ds_path: Path):
+    ds = pickle.load(ds_path.open('rb'))
+    label_set = set()
+    for e in ds:
+        label_set.add(e[1])
+    label_map = dict()
+    for i, label in enumerate(label_set):
+        label_map[label] = i
+    for e in ds:
+        e[1] = label_map[e[1]]
+    data = {
+        'data': data,
+        'labels_num': len(label_set)
+    }
+    pickle.dump(data, (ds_path).open("wb"))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -154,4 +179,5 @@ if __name__ == "__main__":
     tokenizer = BertTokenizer(args)
 
     generate_raw_dataset(args, Path(args.file_path))
-    generate_dataset(args, Path(args.file_path) / "../raw")
+    generate_dataset(args, Path(args.file_path) / "../tmp")
+    # postprocess_dataset(Path(args.file_path) / "../tmp/dataset.pkl")

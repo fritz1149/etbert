@@ -30,7 +30,7 @@ dataset_save_path = "./data/"
 samples = [100000]
 features = ["payload", "length"]
 dataset_level = "flow"
-
+splitcap_finish = False
 
 def dataset_extract(model):
 
@@ -83,17 +83,17 @@ def dataset_extract(model):
             "Dataset directory %s not exist.\nBegin to obtain new dataset."
             % (dataset_save_path + "dataset/")
         )
-
     X, Y = dataset_generation.generation(
         pcap_path,
         samples,
         features,
-        splitcap=False,
+        # splitcap=False,
+        splitcap=not bool(splitcap_finish),
         dataset_save_path=dataset_save_path,
         dataset_level=dataset_level,
     )
-    print('X', X)
-    print('Y', Y)
+    # print('X', X)
+    # print('Y', Y)
     dataset_statistic = [0] * _category
 
     X_payload = []
@@ -119,8 +119,22 @@ def dataset_extract(model):
     split_1 = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=41)
     split_2 = StratifiedShuffleSplit(n_splits=1, test_size=0.5, random_state=42)
 
+    # 把只有一个样本的和没有的去除
+    X_payload_new = []
+    Y_all_new = []
+    for i, label in enumerate(Y_all):
+        if label <= _category and dataset_statistic[label] > 1:
+            X_payload_new.append(X_payload[i])
+            Y_all_new.append(label)
+    X_payload = X_payload_new
+    Y_all = Y_all_new
+
     x_payload = np.array(X_payload)
     dataset_label = np.array(Y_all)
+    # print('x_payload:', x_payload)
+    print('dataset_label:')
+    for label in dataset_label:
+        print(label)
 
     x_payload_train = []
     y_train = []
@@ -138,6 +152,7 @@ def dataset_extract(model):
             dataset_label[train_index],
         )
         x_payload_test, y_test = x_payload[test_index], dataset_label[test_index]
+        print('y_test', y_test)
     for test_index, valid_index in split_2.split(x_payload_test, y_test):
         x_payload_valid, y_valid = x_payload_test[valid_index], y_test[valid_index]
         x_payload_test, y_test = x_payload_test[test_index], y_test[test_index]
@@ -284,7 +299,7 @@ def count_label_number(samples):
         dataset_length, labels = open_dataset_deal.statistic_dataset_sample_count(
             pcap_path
         )
-
+    # print(len(dataset_length), _category)
     for index in range(len(dataset_length)):
         if dataset_length[index] < samples[0]:
             print(
@@ -309,7 +324,8 @@ def main(_category, dataset_dir, pcap_path, dataset_save_path, samples, features
          open_dataset_not_pcap, file2dir, splitcap_finish):
     samples = [samples]
 
-    params = ['_category', 'dataset_dir', 'pcap_path', 'dataset_save_path', 'samples', 'features', 'dataset_level']
+    params = ['_category', 'dataset_dir', 'pcap_path', 'dataset_save_path', 'samples', 'features', 'dataset_level', 
+              'splitcap_finish']
     for param_name in params:
         globals()[param_name] = locals()[param_name]
 
@@ -333,6 +349,8 @@ def main(_category, dataset_dir, pcap_path, dataset_save_path, samples, features
         samples = count_label_number(samples)
     else:
         samples = samples * _category
+    # print(len(samples))
+    globals()['samples'] = samples
 
     train_model = ["pre-train"]
     ml_experiment = 0
